@@ -176,7 +176,7 @@ public class shop_management_system {
         System.out.println("Total paid able Amount :-- "+TOTAL_PAID);
         System.out.println("GIVE THIS BILL TO WORKER AND COLLECT ALL YOUR STUFF FROM COUNTER NO 1");
         System.out.println("THANK YOU COME AGAIN ");
-
+profile();
 
 
     }
