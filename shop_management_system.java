@@ -1,32 +1,24 @@
-
-
-
+package prashant.com;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Scanner;
-
 public class shop_management_system {
     Scanner input = new Scanner(System.in);
-    String item_name_1 = "";/* To get the stock */
-    int TOTAL_PAID;
-
-    String item_name_2 = "";// To get the stock information
-    int item_weight_1 ;//weight of stock item
-    int Item_weight_2;//weight of second stock item
-    /* customer buy variable*/
-    int customer_weight_1;// quantity how much customer need
-    int Customer_weight_2;//quantity how much customer need
-    int customer_choice_1; //
-    int customer_choice_2;
-    int customer_paid_1 ;
-    int customer_paid_2 ;
-    /* stock_check_variable*/
-    int stock_weight_1 ;////TO get information about stock left
-    int stock_weight_2; //= (Item_weight_2 - Customer_weight_2);//TO get information about stock left
-    int price_1;
-    int price_2;
-
-    
+int  profit = 0;
+    float paid = 0;
+    int profite = 0 ;
+    ArrayList<Integer> stock_quantity = new ArrayList<>();
+    ArrayList<Float>COST_PRICE = new ArrayList<>();
+    ArrayList<String>stock_name = new ArrayList<>();
+    ArrayList<Float>stock_price = new ArrayList<>();
+    ArrayList<String>customer_choice = new ArrayList<>();
+    ArrayList<Float>customer_weight = new ArrayList<>();
+    ArrayList<Float>customer_paid = new ArrayList<>();
+    ArrayList<Float>total_paid = new ArrayList<>();
+    ArrayList<String>name_sale = new ArrayList<>();
+    ArrayList<Float>weight_sale = new ArrayList<>();
+    ArrayList<Float>paid_sale = new ArrayList<>();
     public void profile()
     {
         System.out.println("Select your profile  :-");
@@ -35,44 +27,49 @@ public class shop_management_system {
         int login = input.nextInt();
         if (login == 1){
             admin();
-
         }
-        if (login == 2);{
+        if (login == 2){
                customer();
         }
     }
     public void admin(){
-        String password = "";
         System.out.println("1:- add stock ");
         System.out.println("2:- stock check ");
         System.out.println("3:- check Today  sale ");
         int stock_check = input.nextInt();
        if (stock_check == 1 || stock_check == 2 || stock_check == 3) {
            switch (stock_check) {
-               case 1:
-                   System.out.println("NAME :-  ");
-                   item_name_1 = input.next();
-                   System.out.println("quantity(kg) :-  ");
-                   item_weight_1 = input.nextInt();
-                   System.out.println("price:-  ");
-                   price_1 = input.nextInt();
-                   System.out.println("NAME :- ");
-                   item_name_2 = input.next();
-                   System.out.println("quantity(kg) :-  ");
-                   Item_weight_2 = input.nextInt();
-                   System.out.println("price:-  ");
-                   price_2 = input.nextInt();
-                   System.out.println("stock is updated, if you want to check the stock entre PASSWORD otherwise just entre 'x'");
-                   password = input.next();
+               case 1:// In this I have used concept of arraylist (because we don't know the number of stock have to add
+                   while (true){
+                       System.out.println("to exit it please write exit ");
+                       System.out.println("entre the name of the material to add :-");
+                       String name = input.next();
+                       if (name.equalsIgnoreCase("exit")){
+                           break;
+                       }
+                       System.out.println("entre the quantity of material :-");
+                       int quantity = input.nextInt();
+                       System.out.println("entre the price of material per kg :-");
+                       float price = input.nextFloat();
+                       System.out.println("entre the cost price of material :- ");
+                       float COST= input.nextFloat();
+                       stock_name.add(name);
+                       stock_quantity.add(quantity);
+                       stock_price.add(price);
+                       COST_PRICE.add(COST);
+                   }
+                   profile();
                    break;
                case 2:
-                   System.out.println("**************************STOCK DETAILS ********************************");
-                   System.out.println(item_name_1 + ":-" + item_weight_1);
-                   System.out.println(item_name_2 + ":-" + Item_weight_2);
+                   for (int i = 0 ; i < stock_name.size() ; i++){
+                       System.out.println(stock_name.get(i)+":-"+stock_quantity.get(i));
+                   }
+                   profile();
                    break;
                case 3:
                    System.out.println("                                 TODAY SALE                                    ");
-                   System.out.println("UNDER DEVELOPMENT 404...........................................................");// today sale after customer
+                   TOTAL_SALE();// today sale after customer
+                   calculateProfit();// total profit of day
                    admin();
            }
        }
@@ -81,112 +78,101 @@ public class shop_management_system {
            System.out.println("start the process from beginning");
            profile();
        }
-       if (password.equals("PASSWORD") || password.equals("Password") || password.equals("pASSWORD")  || password.equals("password") ){
-           System.out.println("**************************STOCK DETAILS ********************************");
-           System.out.println(item_name_1 + ":-" + item_weight_1);
-           System.out.println(item_name_2 + ":-" + Item_weight_2);
-           profile();
-       } else if (password.equals("X")|| password.equals("x")) {
-           profile();
-       }
-
     }
     public void customer(){
-        System.out.println("IF YOU WANT TO ADD ANYTHING IN YOU CART ENTRE 1 ELSE ENTRE 0 ");
-        System.out.println("1>"+item_name_1+":-"+price_1+"per kg");
-        System.out.println("DID  YOU WANT"+item_name_1+":-");
-        customer_choice_1 = input.nextInt();
-        if (customer_choice_1 == 1){
-            System.out.println("How much you want :- ");
-            int sample_check_1 = input.nextInt();
-            System.out.println("SELECT IN WHICH QUANTITY YOU WANT THE PRODUCT");
-            System.out.println("1:-kg");
-            System.out.println("2:-gram");
-            int weight = input.nextInt();
-            if (weight == 1){
-
-                customer_weight_1 = sample_check_1;
-               customer_paid_1 = price_1*customer_weight_1;
-
-            } else if (weight == 2) {
-                customer_weight_1 = sample_check_1/1000;//converting gram into kg for all correct value
-                customer_paid_1 = price_1*customer_weight_1;
+        //stock visual to customer
+        System.out.println("if you want to add anything in your cart entre 1 else any number ");
+        for(int i = 0 ; i <stock_name.size() ; i++ ){
+            System.out.println(stock_name.get(i)+":-"+stock_price.get(i));
+            System.out.println("DO YOU WANT"+stock_name.get(i));
+            int choice = input.nextInt();
+            if (choice == 1){
+                System.out.println("entre the quantity you want (in kg):-");
+                float weight = input.nextFloat();
+                customer_weight.add(weight);
+                customer_choice.add(stock_name.get(i));
+                customer_paid.add(stock_price.get(i)*customer_weight.get(i));
             }
-            else {
-                System.out.println("INVALID INPUT");
-                customer();
-            }
-
-        }
-        System.out.println("2>"+item_name_2+":-"+price_2+"per kg");
-        System.out.println("DID  YOU WANT"+item_name_2+":-");
-        customer_choice_2 = input.nextInt();
-        if (customer_choice_2 == 1){
-            System.out.println("How much you want :- ");
-            int sample_check_2 = input.nextInt();
-            System.out.println("SELECT IN WHICH QUANTITY YOU WANT THE PRODUCT");
-            System.out.println("1:-kg");
-            System.out.println("2:-gram");
-            int weight_1 = input.nextInt();
-            if (weight_1 == 1){
-                Customer_weight_2 = sample_check_2;
-                customer_paid_2 = price_2*Customer_weight_2;
-
-            } else if (weight_1 == 2) {
-                Customer_weight_2 = sample_check_2 /1000;//converting gram into kg for all correct value
-                customer_paid_2 = price_2*Customer_weight_2;
-            }
-            else {
-                System.out.println("***********************INVALID INPUT*******************************");
-                customer();
-            }
-
         }
         System.out.println("*******************THE END *******************************************");
         System.out.println("your bill is getting ready ");
         System.out.println("LOADING..................................................................................");
-        utility_bills();
+        utility_bill();
         System.out.println("THANK YOU FOR YOU VISIT ");
         profile();
-
     }
-    public void utility_bills() {
-        System.out.println("ENTRE YOUR NAME :- ");
+    public void utility_bill() {
+        System.out.println("entre your name :-");
         String name = input.next();
-        System.out.println("ENTRE YOUR PHONE NUMBER :-");
-        long phone_no = input.nextLong();
-        int length = String.valueOf(phone_no).length();
+        System.out.println("entre your mobile number :-");
+        long mobile_number = input.nextLong();
+        int length = String.valueOf(mobile_number).length();
         if (length != 10) {
-            System.out.println("your phone number is invalid input ");
-            utility_bills();
+            System.out.println("your phone number is invalid in ");
+            utility_bill();
         }
-        System.out.println("*********YOUR UTILITY BILL IS READY NOW************************** ");
-        input.nextLine();
         System.out.println("                                  ENGINEERING GENERAL  STORE                          ");
         LocalDateTime currentDateTime = LocalDateTime.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         String formattedDateTime = currentDateTime.format(formatter);
         System.out.println(name+ "                                             " + formattedDateTime);
-        System.out.println(phone_no);
-        System.out.println("ITEM                  QTY                          PRICE ");
-        System.out.println(item_name_1+"          "+customer_weight_1+"        "+customer_paid_1);
-        System.out.println(item_name_2+"          "+Customer_weight_2+"        "+customer_paid_2);
-        TOTAL_PAID = customer_paid_1+customer_paid_2;
-
-        System.out.println("Total paid able Amount :-- "+TOTAL_PAID);
-        System.out.println("GIVE THIS BILL TO WORKER AND COLLECT ALL YOUR STUFF FROM COUNTER NO 1");
-        System.out.println("THANK YOU COME AGAIN ");
-profile();
-
-
+        System.out.println(mobile_number);
+        for (int i = 0 ; i< customer_weight.size(); i++){
+            System.out.println(customer_choice.get(i)+"  "+customer_weight.get(i)+"  "+customer_paid.get(i));
+            paid = paid+customer_paid.get(i);
+        }
+        for (int i = 0 ; i < customer_weight.size();i++ ){
+            name_sale.add(customer_choice.get(i));
+            weight_sale.add(customer_weight.get(i));
+            paid_sale.add(customer_paid.get(i));
+        }
+        customer_choice.clear();
+        customer_weight.clear();
+        customer_paid.clear();
+        total_paid.add(paid);
+        for (int i = 0 ; i <total_paid.size();i++) {
+            System.out.println("TOTAL AMOUNT TO PAY :-" + total_paid.get(i));
+        }
+        total_paid.clear();
+        System.out.println("Thanks to come in your favourite store ");
+        stock_manage();
+        stock_check();
+    }
+    public void TOTAL_SALE(){
+        System.out.println("TOTAL SALE ");
+        for (int i = 0 ; i <name_sale.size();i++ ){
+            System.out.println(name_sale.get(i)+":-"+weight_sale.get(i)+":-"+paid_sale.get(i));
+            profite += paid_sale.get(i);
+        }
+        System.out.println("Total sale :-"+profite);
+    }
+    public void stock_manage() {// stock get decrease with customer's shopping
+        for (int i = 0; i < stock_name.size(); i++) {
+            if (customer_choice.contains(stock_name.get(i))) {
+                int index = customer_choice.indexOf(stock_name.get(i));
+                stock_quantity.set(i, stock_quantity.get(i) - customer_weight.get(index).intValue());
+            }
+        }
+    }
+    public void calculateProfit() {
+        float total_cost = 0;
+        for (int i = 0; i < name_sale.size(); i++) {
+            int index = stock_name.indexOf(name_sale.get(i));
+            total_cost += COST_PRICE.get(index) * weight_sale.get(i);
+        }
+        float total_paid = (float) paid_sale.stream().mapToDouble(Float::doubleValue).sum();
+        profit = (int) (total_paid - total_cost);
+        System.out.println("Profit made today: " + profit);
+    }
+    public void stock_check(){// check if the stock is less than a thresold value and give notification to admin;
+        for (int i = 0; i < stock_quantity.size(); i++) {
+            if (stock_quantity.get(i)<5){
+                System.out.println("stock is getting less, please fill the stock");
+            }
+        }
     }
     public static void main(String[] args) {
         shop_management_system system = new shop_management_system();
         system.profile();
     }
 }
-
-
-
-
-
